@@ -1,0 +1,21 @@
+# vim swape tmp files
+.*.swp
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+# matlab file ignore
+*.asv
+*.mat
+*.mat
+
+# cpp file ignore
+*.o
+*.obj
+*.out
+ 
+# tmp work
+tmp/
