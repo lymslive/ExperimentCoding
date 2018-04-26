@@ -1,0 +1,3 @@
+order_amt
+orderno
+orderno_cp

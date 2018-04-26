@@ -16,6 +16,7 @@ Session.vim
 *.o
 *.obj
 *.out
+bin/
  
 # tmp work
 tmp/
