@@ -6,12 +6,22 @@ use warnings;
 package packA;
 
 my $vara = "var A";
+our $uA = "our A";
+# 在 strict 下不允许裸用变量，必须指定包名
+# $nuA = "no our A";
 
 &suba unless defined caller;
 
 sub suba
 {
 	print "$vara\n";
+
+	# my 变量 vara 不是 $packA::vara
+	# print "$packA::vara\n";
+	# our 变量是别名
+	print "$packA::uA\n";
+	print "$uA\n";
+	print "$nuA\n";
 }
 
 sub subbb
