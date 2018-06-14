@@ -29,3 +29,8 @@ my $vara = "VAR A";
 # my $packA::vara = "VAR A";
 # print "$packA::vara from packB\n";
 print "$vara from packB\n";
+
+# 可以访问 our 变量，实则是全名变量的别名
+print "${packA::uA} from packB\n";
+$packA::uA = 333;
+print "$packA::uA from packB\n";
