@@ -1,0 +1,10 @@
+#! /bin/bash
+# 按 man sort 所说
+# 需 Set LC_ALL=C 才能严格按字符序排序，否则可能将标点符号与字母分开处理
+
+OLD=$LC_ALL
+export LC_ALL=C
+
+sort
+
+export LC_ALL=$OLD
