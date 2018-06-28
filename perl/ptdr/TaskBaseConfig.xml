@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="gb2312" standalone="yes" ?>
+<metalib tagsetversion="1" name="ResDef" version="1" >
+	
+	<macro name="TaskTitleMaxLen" value="128" desc="标题最大长度" />
+	<macro name="TaskDescriptionLen" value="512" desc="任务描述最大长度" />
+	<macro name="TaskTargetMaxNum" value="3" desc="任务目标最大数量" />	
+	<macro name="TaskAwardMaxNum" value="5" desc="任务奖励最大数量" />	
+
+	<macrosgroup name="TaskTargetType" desc="任务目标类型">
+		<macro name="TASK_TARGET_NONE"  value="0" desc="默认值" />
+		<macro name="TASK_TARGET_TALK"  value="1" desc="对话" />
+		<macro name="TASK_TARGET_GIVEITEM"  value="2" desc="送物" />
+		<macro name="TASK_TARGET_FEEDBACK"  value="3" desc="反馈" />
+		<macro name="TASK_TARGET_KILLMONSTER"  value="4" desc="杀怪" />
+		<macro name="TASK_TARGET_COLLECT"  value="5" desc="收集" />
+		<macro name="TASK_TARGET_ZHENCHA"  value="6" desc="侦查" />
+		<macro name="TASK_TARGET_HUSONG"  value="7" desc="护送" />
+		<macro name="TASK_TARGET_LEVEL"  value="8" desc="等级提升" />
+		<macro name="TASK_TARGET_CG"  value="9" desc="看CG" />
+		<macro name="TASK_TARGET_OPENWINDOW"  value="10" desc="打开界面" />
+		<macro name="TASK_TARGET_USEITEM"  value="11" desc="使用物品" />
+		<macro name="TASK_TARGET_WEAREQUIP"  value="12" desc="穿装备" />
+		<macro name="TASK_TARGET_ROB"  value="13" desc="掠夺任务" />
+		<macro name="TASK_TARGET_ACTIVITY"  value="14" desc="活动任务" />
+		<macro name="TASK_TARGET_USE_TASK_ITEM"	value="15" desc="使用任务物品" />
+		<macro name="TASK_TARGET_ANSWER_QUESTION"	value="16" desc="答题类型" />
+		<macro name="TASK_TARGET_RICHANG_KILLMONSTER"  value="99" desc="日常悬赏杀怪" />
+     </macrosgroup>
+	
+	<macrosgroup name="ActivityTaskType" desc="活动任务类型" >
+		<macro name="ACTIVITY_TASK_BIAO" value="1" desc="运镖" />
+		<macro name="ACTIVITY_TASK_LETTER" value="2" desc="送信" />
+		<macro name="ACTIVITY_TASK_ANSWER" value="3" desc="答题" />
+	</macrosgroup>
+
+	<macrosgroup name="TaskLineType" desc="任务类型">
+     	<macro name="TASK_NONETYPE"  value="0" desc="默认值" />
+		<macro name="TASK_ZHUXIAN"  value="1" desc="主线" />
+		<macro name="TASK_RICHANG"  value="2" desc="日常悬赏" />
+		<macro name="TASK_BANGPAI"  value="3" desc="帮派任务" />
+		<macro name="TASK_YUNBIAO"  value="4" desc="运镖任务" />
+		<macro name="TASK_PIG"  value="5" desc="帮派养猪任务" />
+		<macro name="TASK_CITAN"  value="6" desc="刺探任务" />
+		<macro name="TASK_HUNT"  value="7" desc="狩猎任务" />
+		<macro name="TASK_TOUJING"  value="8" desc="偷经" />
+		<macro name="TASK_SHOUBIAN"  value="9" desc="守边" />
+		<macro name="TASK_KILL_FLAG"  value="10" desc="砍大旗" />
+		<macro name="TASK_GUAJI"  value="11" desc="挂机" />
+		<macro name="TASK_TYPE_MAX"  value="12" desc="最大值" />
+	</macrosgroup>
+	
+	<struct name="TaskConfig" version="1" sortkey="TaskID" desc="主线任务配置表">
+		<entry name="TaskID" type="uint" cname="任务ID" desc="任务ID" />
+		<entry name="Name" type="string" size="TaskTitleMaxLen" cname="任务名字" desc="任务名字"/>
+		<entry name="TaskType" type="byte" cname="任务类别" bindmacrosgroup="TaskLineType"	desc="任务类别,参考TaskLineType的定义" />	
+		<entry name="GroupID" type="uint" cname="任务归属分组" desc="主线任务：章节 其它任务：任务组" />
+		<entry name="SubID" type="uint" cname="章节中编号" desc="任务章节编号，主线任务一章的第几个" />
+		<entry name="TargetType" type="byte" cname="任务类型" bindmacrosgroup="TaskTargetType"	desc="任务目标类型,参考TaskTargetType的定义" />	
+		<entry name="MinLevel" type="int" cname="最低等级" desc="最低等级" />
+		<entry name="MaxLevel" type="int" cname="最高等级" desc="最高等级" />
+        <entry name="AutoSubmit" type="byte" cname="是否自动提交" desc="是否自动提交" />
+        <entry name="PreID" type="uint" cname="前置任务" desc="前置任务" />
+        <entry name="NextID" type="uint" cname="后续任务" desc="后续任务" />
+		<entry name="AutoAccept" type="byte" cname="直接接取" desc="是否直接接取" />
+		<entry name="AutoComplete" type="byte" cname="直接完成" desc="是否直接完成" />
+        <entry name="PublishCountry" type="byte" cname="发布NPC国家" desc="发布NPC国家" />
+        <entry name="PublishMapId" type="uint" cname="发布NPC地图" desc="发布NPC地图" />
+        <entry name="PublishNpcId" type="uint" cname="发布NPCID" desc="发布NPCID" />
+        <entry name="TargetDesc" type="string" size="TaskDescriptionLen" cname="任务目标描述" desc="任务目标描述"/>
+        <entry name="FollowDesc" type="string" size="TaskDescriptionLen" cname="任务跟踪描述" desc="任务跟踪描述"/>
+		<entry name="FinishDesc" type="string" size="TaskDescriptionLen" cname="任务完成描述" desc="任务完成描述"/>
+		<entry name="MainDesc" type="string" size="TaskDescriptionLen" cname="任务描述" desc="任务描述"/>
+        <entry name="PublishDesc" type="string" size="TaskDescriptionLen" cname="任务发布对白" desc="任务发布对白"/>
+        <entry name="DoingDesc" type="string" size="TaskDescriptionLen" cname="任务中对白" desc="任务中对白"/>
+        <entry name="SumbitDesc" type="string" size="TaskDescriptionLen" cname="任务完成对白" desc="任务完成对白"/>
+		<entry name="AcceptTip" type="string" size="TaskDescriptionLen" cname="任务接取提示" desc="任务接取提示"/>
+        <entry name="TargetOverTip" type="string" size="TaskDescriptionLen" cname="任务完成提示" desc="任务完成提示"/>
+        <entry name="SumbitCountry" type="byte" cname="完成NPC国家" desc="完成NPC国家" />
+        <entry name="SumbitMapId" type="uint" cname="完成NPC地图" desc="完成NPC地图" />
+        <entry name="SumbitNpcId" type="uint" cname="完成NPCID" desc="完成NPCID" />
+		<entry name="AcceptBuffID" type="uint" cname="接取任务触发buffID" desc="接取任务触发buffID" />
+		<entry name="AcceptStoryId" type="uint" cname="接取任务触发剧情ID" desc="接取任务触发剧情ID" />
+		<entry name="SumbitStoryId" type="uint" cname="完成任务触发剧情ID" desc="完成任务触发剧情ID" />
+		<entry name="BeforeAcceptStoryId" type="uint" cname="接取任务前触发剧情ID" desc="接取任务前触发剧情ID" />
+		<entry name="BeforeSumbitStoryId" type="uint" cname="完成任务前触发剧情ID" desc="完成任务前触发剧情ID" />
+		<entry name="TargetParam1" type="uint" cname="任务目标参数1" desc="参数1" />
+		<entry name="TargetParam2" type="uint" cname="任务目标参数2" desc="参数2" />
+		<entry name="TargetParam3" type="uint" cname="任务目标参数3" desc="参数3" />
+		<entry name="TargetParam4" type="uint" cname="任务目标参数4" desc="参数4" />
+		<entry name="TargetParam5" type="uint" cname="任务目标参数5" desc="参数5" />
+		<entry name="TargetParam6" type="uint" cname="任务目标参数6" desc="参数6" />
+		<entry name="TargetParam7" type="uint" cname="任务目标参数7" desc="参数7" />
+		<entry name="TargetParam8" type="uint" cname="任务目标参数8" desc="参数8" />
+		<entry name="TargetParam9" type="uint" cname="任务目标参数9" desc="参数9" />
+		<entry name="TaskBootyID" type="uint" cname="任务奖励ID" desc="任务奖励ID" />
+	</struct>
+	
+	<macro name="MAX_AWARD_ATTR_COUNT" value="5" desc="最大奖励属性个数" />
+	
+	<struct name="ChapterConfig" version="1" desc="章节剧情">
+		<entry name="ChapterId" type="uint" cname="章节编号" desc="章节编号" />
+		<entry name="ChapterName" type="string" size="TaskTitleMaxLen" cname="章节名字" desc="章节名字"/>
+		<entry name="ChapterDesc" type="string" size="TaskDescriptionLen" cname="章节描述" desc="章节描述"/>
+		<entry name="TotalNum" type="uint" cname="总任务数" desc="总任务数" />
+		<entry name="StartTaskID" type="uint" cname="起始任务编号" desc="起始任务编号" />
+		<entry name="EndTaskID" type="uint" cname="结束任务编号" desc="结束任务编号" />
+		<entry name="AwardAttrsConfig" type="ResAttrImpactData" count="MAX_AWARD_ATTR_COUNT" cname="属性" desc="属性" />
+	</struct>
+
+	<macrosgroup name="TargetCountryDefine" desc="任务目标国家定义" >
+		<macro name="TARGET_COUNTRY_SELF"  value="0" desc="本国" />
+		<macro name="TARGET_COUNTRY_NOT_SELF"  value="1" desc="非本国" />
+		<macro name="TARGET_COUNTRY_ALL"  value="2" desc="无限制" />
+	</macrosgroup>
+
+	<macrosgroup name="CollectTaskFinishSubItemType" desc="收集任务完成后物品扣除类型" >
+		<macro name="COLLECT_TASK_SUB_ITEM_NONE"  value="0" desc="不扣除" />
+		<macro name="COLLECT_TASK_SUB_ITEM_ALL"  value="1" desc="全部扣除" />
+		<macro name="COLLECT_TASK_SUB_ITEM_NEED"  value="2" desc="扣除需要的量" />
+	</macrosgroup>
+
+
+	<struct name="DailyTaskConfig" version="1" sortkey="TaskID" desc="任务配置表">
+		<entry name="TaskID" type="uint" cname="任务ID" desc="任务ID" />
+		<entry name="Name" type="string" size="TaskTitleMaxLen" cname="任务名字" desc="任务名字"/>
+		<entry name="TaskType" type="byte" cname="任务类别" bindmacrosgroup="TaskLineType"	desc="任务类别,参考TaskLineType的定义" />
+		<entry name="GroupID" type="uint" cname="任务归属分组" desc="任务组" />
+		<entry name="TargetType" type="byte" cname="任务类型" bindmacrosgroup="TaskTargetType"	desc="任务目标类型,参考TaskTargetType的定义" />
+		<entry name="TargetDesc" type="string" size="TaskDescriptionLen" cname="任务目标描述" desc="任务目标描述"/>
+		<entry name="FollowDesc" type="string" size="TaskDescriptionLen" cname="任务跟踪描述" desc="任务跟踪描述"/>
+		<entry name="FinishDesc" type="string" size="TaskDescriptionLen" cname="任务完成描述" desc="任务完成描述"/>
+		<entry name="MainDesc" type="string" size="TaskDescriptionLen" cname="任务描述" desc="任务描述"/>
+		<entry name="TargetParam1" type="uint" cname="任务目标参数1" desc="参数1" />
+		<entry name="TargetParam2" type="uint" cname="任务目标参数2" desc="参数2" />
+		<entry name="TargetParam3" type="uint" cname="任务目标参数3" desc="参数3" />
+		<entry name="TargetParam4" type="uint" cname="任务目标参数4" desc="参数4" />
+		<entry name="TargetParam5" type="uint" cname="任务目标参数5" desc="参数5" />
+		<entry name="TargetParam6" type="uint" cname="任务目标参数6" desc="参数6" />
+		<entry name="TargetParam7" type="uint" cname="任务目标参数7" desc="参数7" />
+		<entry name="TargetParam8" type="uint" cname="任务目标参数8" desc="参数8" />
+		<entry name="TargetParam9" type="uint" cname="任务目标参数9" desc="参数9" />
+		<entry name="TaskWeight" type="uint" cname="抽取权重" desc="抽取权重" />
+		<entry name="TaskBootyID" type="uint" cname="任务奖励ID" desc="任务奖励ID" />
+	</struct>
+
+	<macrosgroup name="RefreshTaskType" desc="收集任务完成后物品扣除类型" >
+		<macro name="REFRESH_TYPE_TASKID" value="1" desc="刷新任务ID" />
+		<macro name="REFRESH_TYPE_TASKSTAR" value="2" desc="刷新任务星级" />
+	</macrosgroup>
+	
+	<macro name="MAX_TASK_COUNT_IN_ONE_GROUP" value="200" desc="单个用户组内的最大任务个数" />
+	<struct name="DailyTaskGroupConfig" version="1" desc="任务分组表">
+		<entry name="TaskGroupID" type="uint" cname="分组ID" desc="分组ID" />
+		<entry name="TaskType" type="uint" cname="任务类型" desc="任务类型" />
+		<entry name="MinLevel" type="uint" cname="等级下限" desc="等级下限" />
+		<entry name="MaxLevel" type="uint" cname="等级上限" desc="等级上限" />
+		<entry name="ExtraBootyCount" type="uint" cname="额外奖励环数" desc="额外奖励环数" />
+		<entry name="DailyLimitCount" type="uint" cname="每日限制环数" desc="每日限制环数" />
+		<entry name="ExtraBootyID" type="uint" cname="额外环数奖励ID" desc="额外环数奖励ID" />
+		<entry name="RefreshTaskType" type="uint" cname="刷新任务类型" desc="刷新任务类型" />
+		<entry name="RefreshTaskCostType" type="uint" cname="刷新任务消耗类型" desc="刷新任务消耗类型" />
+		<entry name="RefreshTaskCostValue" type="uint" cname="刷新任务消耗数量" desc="刷新任务消耗数量" />
+		<entry name="CanFetchDoubleBooty" type="byte" cname="能否双倍领取" desc="能否双倍领取" />
+		<entry name="FetchDoubleBootyCostType" type="uint" cname="双倍领取消耗类型" desc="双倍领取消耗类型" />
+		<entry name="FetchDoubleBootyCostValue" type="uint" cname="双倍领取消耗数量" desc="双倍领取消耗数量" />
+		<entry name="OnekeyFinSingleCostType" type="uint" cname="一键单个完成消耗类型" desc="一键单个完成消耗类型" />
+		<entry name="OnekeyFinSingleCostValue" type="uint" cname="一键单个完成消耗数值" desc="一键单个完成消耗数值" />
+		<entry name="OnekeyFinAllCostType" type="uint" cname="一键全部完成消耗类型" desc="一键单个完成消耗类型" />
+		<entry name="OnekeyFinAllCostValue" type="uint" cname="一键全部完成消耗数值" desc="一键单个完成消耗数值" />
+		<entry name="OnekeyFinStarLevel" type="uint" cname="一键完成星级" desc="一键完成星级" />
+		<entry name="OnekeyFinExtraBootyID" type="uint" cname="一键完成额外奖励ID" desc="一键完成额外奖励ID" />
+	</struct>
+
+	<macro name="MAX_TASK_STAR_COUNT" value="10" desc="最大任务星级数" />
+	<struct name="DailyTaskStarBootyConfig" version="1" desc="悬赏任务星级奖励表" >
+		<entry name="TaskID" type="uint" cname="任务ID" desc="任务ID" />
+		<entry name="Star" type="uint" cname="星级" desc="星级" />
+		<entry name="RandParam" type="uint" cname="几率" desc="几率" />
+		<entry name="KillMonsterCount" type="uint" cname="杀怪个数" desc="杀怪个数" />
+		<entry name="BootyID" type="uint" cname="奖励ID" desc="奖励ID" />
+		<entry name="DoubleExtraExp" type="uint" cname="额外经验奖励" desc="额外经验奖励" />
+	</struct>
+
+	<struct name="DailyTaskInitStarConfig" version="1" desc="悬赏任务初始星级" >
+		<entry name="DailyTaskIndex" type="uint" cname="第几个悬赏" />
+		<entry name="InitStar" type="uint" cname="初始星级" />
+		<entry name="RefreshStar" type="uint" cname="刷新星级" />
+	</struct> 
+	
+</metalib>

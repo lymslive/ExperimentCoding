@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+
+if [ $# -lt 1 ]; then
+    echo "usage: vex {vim-script-file-name}"
+    exit 1;
+fi
+
+script=$1
+shift
+
+# it's better to use 'ex' other than 'vim'
+exec ex -S $script -c 'call input("vex done! press enter to quit ...")' -c 'qall!' $@

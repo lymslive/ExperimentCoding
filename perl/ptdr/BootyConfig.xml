@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<metalib tagsetversion="1" name="ResDef" version="1" >
+
+	<macrosgroup name="BootyType" desc="Booty奖励的分配类型">
+		<macro name="BOOTY_TYPE_ABSOLUTE" value="0" desc="全部都分配"/>
+		<macro name="BOOTY_TYPE_RAND_ABSOLUTE" value="1" desc="绝对概率分配,概率基数为10w"/>
+		<macro name="BOOTY_TYPE_RAND_REL" value="2" desc="相对概率分配"/>
+    <macro name="BOOTY_TYPE_NO_PUTBACK_REL" value="3" desc="无放回相对概率" />
+	</macrosgroup>
+
+	<macrosgroup name="BootyItemType" desc="Booty奖励的物品类型">
+		<macro name="BOOTY_ITEM_TYPE_RESERVED" value="0" desc="空道具" />
+		<macro name="BOOTY_ITEM_TYPE_GOODS" value="1" desc="道具类型"/>
+		<macro name="BOOTY_ITEM_TYPE_FIX_EQUIP" value="2" desc="固定装备类型"/>
+		<macro name="BOOTY_ITEM_TYPE_VARIABLE_EQUIP" value="3" desc="可换装备类型"/>
+		<macro name="BOOTY_ITEM_TYPE_EXP" value="4" desc="经验类型"/>
+		<macro name="BOOTY_ITEM_TYPE_JIN" value="5" desc="金子"/>
+		<macro name="BOOTY_ITEM_TYPE_YIN" value="6" desc="银币"/>
+		<macro name="BOOTY_ITEM_TYPE_TONG" value="7" desc="铜币"/>
+		<macro name="BOOTY_ITEM_TYPE_FIXED_ATTR_EQUIP" value="8" desc="固定属性装备，读装备掉落表"/>
+		<macro name="BOOTY_ITEM_TYPE_PIFENG" value="9" desc="披风"/>
+		<macro name="BOOTY_ITEM_TYPE_FASHION" value="10" desc="时装"/>
+		<macro name="BOOTY_ITEM_TYPE_GUILD_SALARY" value="11" desc="帮派分红工资"/>
+		<macro name="BOOTY_ITEM_TYPE_OFFICE_MINGWANG" value="12" desc="文采/名望"/>
+		<macro name="BOOTY_ITEM_TYPE_OFFICE_WUXUN" value="13" desc="武勋"/>
+		<macro name="BOOTY_ITEM_TYPE_COUNTRY_MERIT" value="14" desc="国战功勋" />
+		<macro name="BOOTY_ITEM_TYPE_HORSE_EXP" value="15" desc="坐骑经验" />
+		<macro name="BOOTY_ITEM_TYPE_AMBIT_GANWU" value="16" desc="境界感悟值" />
+		<macro name="BOOTY_ITEM_TYPE_GUILD_MONEY" value="17" desc="帮派资金" />
+		<macro name="BOOTY_ITEM_TYPE_CARD" value="18" desc="卡牌" />
+		<macro name="BOOTY_ITEM_TYPE_JINGYUAN" value="19" desc="侠客英魂" />
+		<macro name="BOOTY_ITEM_TYPE_PVP_MONEY" value="20" desc="荣誉" />
+		<macro name="BOOTY_ITEM_TYPE_GUILD_CONTRIBUTE" value="21" desc="帮派贡献" />
+		<macro name="BOOTY_ITEM_TYPE_ZHENYUAN" value="22" desc="真元" />
+		<macro name="BOOTY_ITEM_TYPE_SKILL_POINT" value="23" desc="技能点" />
+	</macrosgroup>
+
+  <macrosgroup name="BindType" desc="绑定类型">
+    <macro name="NOT_BIND" value="0" desc="不绑定"/>
+    <macro name="GET_BIND" value="1" desc="获得绑定"/>
+    <macro name="EQUIP_BIND" value="2" desc="使用绑定"/>
+  </macrosgroup>
+  
+  <struct name="BootyConfig" version="1" sortkey="BootyID" desc="掉落配置">
+		<entry name="BootyID" type="uint" cname="奖励ID" desc="奖励编号" />
+		<entry name="BootyType" type="int" bindmacrosgroup="BootyType" cname="奖励类型" desc="奖励类型,参考BootyType定义"/>
+		<entry name="AwardCnt" type="int" cname="奖励领取的个数" />
+		<entry name="RandParam" type="int" cname="概率" desc="概率参数,更具BootyType来决定"/>
+		<entry name="MinLevel" type="int" cname="最低等级" desc="最低等级" />
+		<entry name="MaxLevel" type="int" cname="最高等级" desc="最高等级" />
+		<entry name="ItemType" type="int" bindmacrosgroup="BootyItemType" cname="奖励物品类型" desc="奖励物品类型,参考BootyItemType定义"/>		
+		<entry name="ItemID" type="int" cname="奖励物品ID" desc="奖励物品ID"/>
+		<entry name="ItemCnt" type="int" cname="奖励物品个数" desc="奖励物品个数" />
+		<entry name="ItemParam" type="int" cname="奖励参数" count="3" desc="奖励参数" />
+		<entry name="DropSceneObjID" type="uint" cname="掉落箱子物件ID" />
+    <entry name="IsLevelBooty" type="byte" cname="是否等级奖励" desc="是否等级奖励,等级奖励的话奖励个数走等级奖励表"/>
+    <entry name="BootyQuality" type="uint" cname="奖励品质" desc="奖励的品质，某些系统用于客户端展示" />
+    <entry name="IsBind" type="byte" cname="是否绑定" desc="是否绑定" />
+    <entry name="Job" type="byte" cname="职业限制" desc="职业限制" />
+	</struct>
+
+  <struct name="QualityPlanConfig" version="1" desc="品质分布配置">
+    <entry name="QualityPlanID" type="uint" cname="品质分布ID" desc="品质分布ID" />
+    <entry name="Rate" type="int" cname="概率" desc="概率"/>
+    <entry name="Quality" type="Byte" cname="品质" desc="品质" />
+    <entry name="Prefix" type="Byte" cname="前缀" desc="前缀" />
+  </struct>
+  
+</metalib>
