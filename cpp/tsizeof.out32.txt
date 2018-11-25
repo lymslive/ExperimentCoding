@@ -1,0 +1,30 @@
+sizeof(ca): 14
+sizeof(p1): 4
+sizeof(p2):8
+sizeof(matrix):9
+sizeof(Stu1):12
+sizeof(Stu2):12
+sizeof(Stu3):12
+sizeof(Foo1):12
+sizeof(Foo2):8
+sizeof(char):1
+sizeof(short):2
+sizeof(int):4
+sizeof(long):4
+sizeof(long long):8
+sizeof(float):4
+sizeof(double):8
+sizeof(long double):12
+sizeof(size_t):4
+sizeof(void*):4
+sizeof(char*):4
+sizeof(int*):4
+sizeof(double*):4
+sizeof(uint8_t):1
+sizeof(uint16_t):2
+sizeof(uint32_t):4
+sizeof(uint64_t):8
+sizeof(int8_t):1
+sizeof(int16_t):2
+sizeof(int32_t):4
+sizeof(int64_t):8
