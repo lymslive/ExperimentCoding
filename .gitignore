@@ -21,3 +21,4 @@ bin/
  
 # tmp work
 tmp/
+__pycache__/
