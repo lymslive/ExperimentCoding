@@ -31,12 +31,12 @@ public:
 
 	CHeadString& operator= (const CHeadString<HeadU>& that);
 
-	bool operator== (const CHeadString<HeadU>& that);
-	bool operator<= (const CHeadString<HeadU>& that);
-	bool operator>= (const CHeadString<HeadU>& that) { return that <= *this; }
-	bool operator<  (const CHeadString<HeadU>& that) { return !(*this >= that); }
-	bool operator>  (const CHeadString<HeadU>& that) { return !(*this <= that); }
-	bool operator!= (const CHeadString<HeadU>& that) { return !(*this == that); }
+	bool operator== (const CHeadString<HeadU>& that) const;
+	bool operator!= (const CHeadString<HeadU>& that) const { return !(*this == that); }
+	bool operator<  (const CHeadString<HeadU>& that) const;
+	bool operator>= (const CHeadString<HeadU>& that) const { return !(*this < that); }
+	bool operator>  (const CHeadString<HeadU>& that) const { return that < *this; }
+	bool operator<= (const CHeadString<HeadU>& that) const { return !(that < *this); }
 
 private:
 	void _copy(const CHeadString<HeadU>& that);
@@ -164,7 +164,7 @@ void CHeadString<HeadT>::_free()
 	}
 
 	char *pMem = m_pData - head();
-	delete[] pMem;
+	free(pMem);
 	m_pData = NULL;
 }
 
@@ -186,6 +186,10 @@ char* CHeadString<HeadT>::_alloc(size_t iLength)
 template <class HeadT>
 bool CHeadString<HeadT>::operator==(const CHeadString<HeadU>& that)
 {
+	if (m_pData == that.m_pData)
+	{
+		return true;
+	}
 	if (that.length() != length())
 	{
 		return false;
@@ -194,7 +198,7 @@ bool CHeadString<HeadT>::operator==(const CHeadString<HeadU>& that)
 }
 
 template <class HeadT>
-bool CHeadString<HeadT>::operator<=(const CHeadString<HeadU>& that)
+bool CHeadString<HeadT>::operator<(const CHeadString<HeadU>& that)
 {
 	size_t iThis = length();
 	size_t iThat = that.length();
@@ -207,7 +211,7 @@ bool CHeadString<HeadT>::operator<=(const CHeadString<HeadU>& that)
 		return false;
 	}
 
-	return strcmp(m_pData, that.m_pData) <= 0;
+	return strcmp(m_pData, that.m_pData) < 0;
 }
 
 #endif /* end of include guard: CHEADSTRING_H__ */
