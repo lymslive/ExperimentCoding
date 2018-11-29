@@ -17,15 +17,14 @@ public:
 	CHString(const CHString& that);
 	~CHString();
 
-	int HeadLen();
-	bool InStack() { return HeadLen() <= 14; }
-	bool InHeap() { return !InStack(); }
+	int HeadLen() { return large.head; }
+	bool InHeap() { return HeadLen() > 14; }
 
 	size_t length() const;
 	const char* c_str() const;
 	const char* c_end() { return c_str() + length(); }
 	char* begin() { return data(); }
-	char* end() { return data() + len; }
+	char* end() { return data() + length(); }
 	char* data() { return const_cast<char*>(c_str());}
 
 	bool operator< (const CHString& that) const;

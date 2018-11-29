@@ -2,6 +2,7 @@
 #define CSTATICSTRING_H__
 
 #include <cstring>
+#include <stddef.h>
 
 // 表示一个字符串的纯粹的结构体
 // typedef StructString SStr
@@ -10,8 +11,9 @@ struct SStr
 	size_t len;
 	const char* str;
 
-	SStr() : len(0), str(NULL);
-	SStr(const char* pStr) : len(strlen(pStr)), str(pStr);
+	SStr() : len(0), str(NULL) {}
+	SStr(const char* pStr) : len(strlen(pStr)), str(pStr) {}
+	SStr(const char* pStr, size_t iLength) : len(iLength), str(pStr) {}
 };
 
 // 静态字符串类，不申请额外保存空间
@@ -22,7 +24,8 @@ class CStr : protected SStr
 {
 public:
 	CStr() {}
-	CStr(const char* pStr) : SStr(pStr);
+	CStr(const char* pStr) : SStr(pStr) {}
+	CStr(const char* pStr, size_t iLength) : SStr(pStr, iLength) {}
 
 	size_t length() const { return len; }
 
@@ -50,7 +53,7 @@ public:
 	bool operator!= (const CStr& that) const { return !(*this == that); }
 
 	// 索引未检查越界，像原始字符指针使用
-	char& operator[](size_t i) { return str[i]; }
+	char& operator[](size_t i) { return *(const_cast<char*>(str) + i); }
 	const char& operator[](size_t i) const { return str[i]; }
 
 };

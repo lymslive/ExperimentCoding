@@ -31,11 +31,17 @@ public:
 
 	CHeadString& operator= (const CHeadString<HeadU>& that);
 
+	template <class HeadU>
 	bool operator== (const CHeadString<HeadU>& that) const;
+	template <class HeadU>
 	bool operator!= (const CHeadString<HeadU>& that) const { return !(*this == that); }
+	template <class HeadU>
 	bool operator<  (const CHeadString<HeadU>& that) const;
+	template <class HeadU>
 	bool operator>= (const CHeadString<HeadU>& that) const { return !(*this < that); }
+	template <class HeadU>
 	bool operator>  (const CHeadString<HeadU>& that) const { return that < *this; }
+	template <class HeadU>
 	bool operator<= (const CHeadString<HeadU>& that) const { return !(that < *this); }
 
 private:

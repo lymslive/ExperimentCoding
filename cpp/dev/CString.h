@@ -8,17 +8,21 @@
 class CString : public CStr
 {
 public:
-	CString() {}
-	CString(const char* pStr);
+	// CString() {}
+	CString(const char* pStr = NULL);
 	CString(const CString& that);
-	~CString() { _free(); }
+	CString(const CStr& that);
+	~CString() { _free(); len = 0; }
 
 	CString& operator= (const CString& that);
-	CString& operator+ (const CString& that);
+	CString& operator= (const char* pthat);
+	CString operator+ (const char* pthat);
+	CString& operator+= (const char* pthat);
 
 protected:
-	void _alloc(size_t n);
+	char* _alloc(size_t n);
 	void _free();
+	void _copy(const char* pStr, size_t iLength);
 };
 
 // 用于构造可增长的字符串
@@ -26,23 +30,30 @@ protected:
 class CStrbuf : public CString
 {
 public:
-	CStrbuf() : CString(), cap(0) {}
-	CStrbuf(const char* pStr);
+	// CStrbuf() : CString(), cap(0) {}
+	CStrbuf(const char* pStr = NULL);
 	CStrbuf(size_t nCap);
-	// ~CStrbuf() { _free(); }
+	CStrbuf(const CStrbuf& that);
+	CStrbuf(const CStr& that);
+	~CStrbuf() { cap = 0; }
 
-	CStrbuf& operator+= (const CString& that);
-	CStrbuf& operator+ (const CString& that);
+	CStrbuf& operator<< (const char* pthat) { return *this += pthat; }
 	CStrbuf& operator+= (const char* pthat);
-	CStrbuf& operator+ (const char* pthat);
+	CStrbuf operator+ (const char* pthat);
+	CStrbuf& operator= (const char* pthat);
+	CStrbuf& operator= (const CStrbuf& that);
 
-	CStrbuf& reserve(nCap);
-	// 删除冗余空间，并将自己强转为基类返回
-	CString& fixstr();
+	// 扩展空间
+	CStrbuf& reserve(size_t nCap);
+	// 删除冗余空间，并将自己强转为基类返回，可另外指定截断长度
+	CString* fixstr(size_t cutlen = 0);
+
+	size_t capcity() const { return cap; }
 
 private:
-	CStrbuf(const CStrbuf& that);
-	CStrbuf& operator= (const CStrbuf& that);
+	void _append(const char* pStr, size_t iLength);
+	void _realloc(size_t n);
+
 private:
 	size_t cap;
 };
