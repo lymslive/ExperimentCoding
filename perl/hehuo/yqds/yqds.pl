@@ -180,7 +180,7 @@ elsif ($cgi->param("apple")) {
 	my $Receipt = $cgi->param("receipt");
 	my $valid = 1;
 
-	$valid = verify_apple_receipt($Receipt);
+	# $valid = verify_apple_receipt($Receipt);
 	if ($valid) {
 		my $param_json;
 		$param_json->{obj} = "order";

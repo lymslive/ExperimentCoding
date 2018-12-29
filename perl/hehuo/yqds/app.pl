@@ -18,6 +18,10 @@ binmode(STDERR, ':encoding(utf8)');
 use Encode;
 use Date::Parse;
 
+use Cwd qw(abs_path getcwd);
+use File::Basename;
+use lib(dirname(abs_path(__FILE__)));
+
 ################################################################################
 #                                                                              #
 #            SERVER INFO, PERSON REGISTERATION, LOGIN AND LOGOUT               #
@@ -2852,6 +2856,10 @@ sub p_silentReading_get{
 		return jr() unless assert(0, "暂无课程", "暂无课程", "暂无课程");
 	}
 	
+	if($homework->{readType} ne "默读"){
+		return jr() unless assert(0,"作业阅读类型为朗读","作业阅读类型为朗读","作业阅读类型为朗读");
+	}
+	
     #my $books = mdb()->get_collection("chapter")->find_one({name=>$name,chapter=>$chapter});
 	my $chapter = mdb()->get_collection("chapter")->find_one({_id=>$homework->{chapterId}});
 	if(!$chapter){
@@ -2975,6 +2983,10 @@ sub p_readingAloud_get{
 		return jr() unless assert(0,"资源不存在","not found","资源不存在");
 	}
 
+	if($homework->{readType} ne "朗读"){
+		return jr() unless assert(0,"作业阅读类型为默读","作业阅读类型为默读","作业阅读类型为默读");
+	}
+	
 	my $readingInfo = mdb()->get_collection("readingInfo")->find_one({chapterID=>$chapter->{_id}});
 	
 	my $Schedule = mdb()->get_collection("chapterSchedule")->find_one({studentId=>$gs->{pid},chapterID=>$chapter->{_id}});
@@ -3281,9 +3293,10 @@ sub p_studentScore_set{
 	if($sorceCount <= 0){
 		return jr() unless assert(0,"sorceList 参数错误","sorceList","sorceList 参数错误");
 	}
-	#if($gr->{scoreType} eq "默读" or $gr->{scoreType} eq "朗读" or $gr->{scoreType} eq "默读测试题"){	
-	#	return jr() unless assert($gr->{pageSpacing},"pageSpacing 参数少了","pageSpacing","pageSpacing 参数少了");
-	#}
+	#导读,范读,朗读,评测题
+	if($gr->{scoreType} ne "导读" and $gr->{scoreType} ne "范读" and $gr->{scoreType} ne "朗读" and $gr->{scoreType} ne "评测题"){	
+		return jr() unless assert(0,"scoreType 参数错误","scoreType","scoreType 参数错误");
+	}
 
 	my $pref = obj_read("person", $gs->{pid});
 	if(!$pref){
@@ -3808,7 +3821,7 @@ sub p_homework_share{
 	obj_write($homeworkShare);
 	
 	#记录个人的章节成绩 by wallent
-	my $homeworkSharePersonal=mdb()->get_collection("homeworkSharePersonal")->find_one({studentId=>$gs->pid,booksId=>$Schedule->{booksId}});
+	my $homeworkShare=mdb()->get_collection("homeworkSharePersonal")->find_one({studentId=>$gs->{pid},booksId=>$Schedule->{booksId}});
 	if(defined($homeworkShare))
 	{
 		 
@@ -3841,7 +3854,7 @@ sub p_homework_share{
 			readingAloudScore => $Schedule->{readingAloudTotalSorce},
 			silentReadingScore => $Schedule->{silentReadingTotalSorce},
 		};
-		push  $homeworkSharePersonal->{scores},@inter;
+		push @inter,$homeworkSharePersonal->{scores};
 		$homeworkSharePersonal->{total_guide}=$homeworkSharePersonal->{total_guide}+$Schedule->{guideReadingScore};
 		$homeworkSharePersonal->{total_model}=$homeworkSharePersonal->{total_model}+$Schedule->{modelReadingScore};
 		$homeworkSharePersonal->{total_test}=$homeworkSharePersonal->{total_test}+$Schedule->{testQuestionsScore};
@@ -3855,7 +3868,7 @@ sub p_homework_share{
 		+$Schedule->{silentReadingTotalSorce}
 		;
 		
-		obj_write($homeworkSharePersonal);
+		 obj_write($homeworkSharePersonal);
 	
 
     return jr();
@@ -4169,14 +4182,15 @@ sub p_booksList_get{
 		$regex{'$regex'} = $gr->{searchName};
 		$data{"name"} = \%regex;
 		
-		$data{"status"} = "上架";
-		
 		#if(length($grade)){
 		#	$data{"grade"} = $grade;
 		#}
 		
 		#@booksList = mdb()->get_collection("books")->find(\%data)->limit($limit)->skip($skipCount)->sort({"uploadTime"=>-1})->all();
 	}
+	
+	$data{"status"} = "上架";
+	
 	#else{
 	#	if(length($grade)){
 	#		@booksList = mdb()->get_collection("books")->find({grade=>$grade})->limit($limit)->skip($skipCount)->sort({"uploadTime"=>-1})->all();
@@ -4707,6 +4721,7 @@ sub p_leaderboard_get{
 			}
 		}
 		$leaderboard->{_id} = obj_id();
+		$leaderboard->{type} = "leaderboard";
 		$leaderboard->{homeworkId} = $homework->{_id};
 		$leaderboard->{studentList} = \@studentList;
 		
@@ -6693,7 +6708,105 @@ sub p_cityAndArea_get{
 	return jr({citys=>\@citys});
 }
  
+$p_gradeList_get=<<EOF;
+输入
+		{
+		"obj":"gradeList",
+		"act":"get",
+		"school":""#学校名称
+	}
+输出
+	{
+		"areaList":[]
+	}
+EOF
+sub p_gradeList_get
+{
+ 
+	return jr() unless assert($gr->{school},"school 参数少了","请输入学校名","请输入学校名");
 
+	my $school = mdb()->get_collection("SchoolMember")->find_one({school=>$gr->{school}});
+	if(!$school)
+	{
+		return jr() unless assert(0,"所选学校不存在","所选学校不存在","所选学校不存在");
+	}
+	
+	my @gradeList = mdb()->get_collection("gradeMember")->find({schoolId=>$school->{_id}})->all();
+
+	return jr({gradeList=>\@gradeList});
+ 
+
+}
+$p_admin_judge=<<EOF;
+输入：
+输出：
+list[ permission:			权限(mostAdmin/admin/user)(总管理员/学校管理员/普通用户) 
+	city: #市
+	area:#区
+	school:#学校
+]
+EOF
+
+sub p_admin_judge
+	{
+	return jr() unless assert ($gs->{pid},"未登录","未登录","未登录");
+	my $list={
+	permission=>"",		#权限(mostAdmin/admin/user)(总管理员/学校管理员/普通用户) 
+		city=>"", #市
+		area=>"",#区
+		school=>"",#学校
+ 
+
+	};
+	my $person = obj_read("person",$gs->{pid});
+	$list->{permission}=$person->{permission};
+	if($person->{permission} eq "admin")
+	{
+		my $school=obj_read("SchoolMember",$person->{schoolId});
+		$list->{school}=$school->{school};
+		$list->{city}=$school->{city};
+		$list->{area}=$school->{area};
+	}
+	 return jr({list=>$list});
+ 
+}
+$p_classList_get=<<EOF;
+输入
+		{
+		"obj":"gradeList",
+		"act":"get",
+		"school":"",#学校名称
+		"grade":""#年级名称
+	}
+输出
+	{
+		"areaList":[]
+	}
+EOF
+sub p_classList_get
+{
+ 
+	return jr() unless assert($gr->{school},"school 参数少了","请输入学校名","请输入学校名");
+		return jr() unless assert($gr->{grade},"年级 参数少了","请输入年级名","请输入年级名");
+
+	my $school = mdb()->get_collection("SchoolMember")->find_one({school=>$gr->{school}});
+	if(!$school)
+	{
+		return jr() unless assert(0,"所选学校不存在","所选学校不存在","所选学校不存在");
+	}
+	my $grade = mdb()->get_collection("gradeMember")->find_one({schoolId=>$school->{_id},grade=> $gr->{grade}});
+	if(!$grade)
+	{
+		return jr() unless assert(0,"所选年级不存在","所选年级不存在","所选年级不存在");
+	}
+	
+	
+	my @classList = mdb()->get_collection("classMember")->find({schoolId=>$school->{_id},grade=>$gr->{grade}})->all();
+
+	return jr({classList=>\@classList});
+ 
+
+}
 
 $p_cityAndArea_get =<<EOF;
 获取市区列表
@@ -7000,7 +7113,7 @@ $p_homework_modify =<<EOF;
 				"homeworkId":"",
 				"startTime":123,				当天00:00:00
 				"finishTime":123,				当天23:59:59,就是凌晨减1
-				"readType":"",						类型(朗读/默读)
+				"readType":"",					类型(朗读/默读)
 			}
 		]
 	}
@@ -7367,6 +7480,31 @@ sub homework_update{
 		obj_write($booksHomeworkInfo);
 	}
 	
+	my @booksHomeworkInfoList = mdb()->get_collection("booksHomeworkInfo")->find({teacherCode=>$teacherCode})->all();
+	foreach my $item(@booksHomeworkInfoList){
+		if($item){
+			my @homeworkListTmp = mdb()->get_collection("homework")->find({booksId=>$item->{booksId}, teacherCode=>$teacherCode})->all();
+	
+			my $flagTmp = "未开始";
+			foreach my $homeworkItem (@homeworkListTmp){
+				if($homeworkItem->{finishTime} < $currentTime){
+					$homeworkItem->{publishState} = "已完成";
+					if($flagTmp ne "进行中"){
+						$flagTmp = "已完成";
+					}
+				}
+				elsif($homeworkItem->{startTime} < $currentTime
+					and $homeworkItem->{finishTime} > $currentTime){
+					$homeworkItem->{publishState} = "进行中";
+					$flagTmp = "进行中";
+				}
+				obj_write($homeworkItem);
+			}
+			$item->{publishState} = $flagTmp;
+			obj_write($item);
+		}
+	}
+	
 	return jr();
 }
 
@@ -7450,6 +7588,8 @@ sub p_booksHomeworkList_get{
 	if($books->{status} ne "上架"){	
 		return jr() unless assert(0,"该课本已下架","该课本已下架","该课本已下架");
 	}
+	
+	homework_update($gr->{teacherCode}, $gr->{booksId});
 	
 	my @chapterIdList = values %{$books->{ChapterID}};
 	
@@ -7598,9 +7738,16 @@ sub p_homeworkList_get{
 	
 	#my @homeworkList = mdb()->get_collection("homework")->find({teacherId=>$gs->{pid}, teacherCode=>$gr->{teacherCode}, finishTime =>{'$gt'=>$currentTime}})->sort({"publistTime"=>-1})->all();
 	
-	my @homeworkList = mdb()->get_collection("homework")->find({teacherId=>$gs->{pid}, teacherCode=>$gr->{teacherCode}, startTime =>{'$lt'=>$currentTime}, finishTime =>{'$gt'=>$currentTime}})->all();
+	#my @homeworkList = mdb()->get_collection("homework")->find({teacherId=>$gs->{pid}, teacherCode=>$gr->{teacherCode}, startTime =>{'$lt'=>$currentTime}, finishTime =>{'$gt'=>$currentTime}})->all();
 	
-	my @homeworkListTmp = sort { $a->{chapterNum} <=> $b->{chapterNum} } @homeworkList if(scalar @homeworkList);
+	my @homeworkList = mdb()->get_collection("homework")->find({teacherId=>$gs->{pid}, teacherCode=>$gr->{teacherCode}, finishTime =>{'$gt'=>$currentTime}})->all();
+	
+	my @homeworkListTmp = ();
+	if(scalar(@homeworkList)){
+		my $booksId = $homeworkList[0]->{booksId}; 
+		@homeworkList = mdb()->get_collection("homework")->find({teacherId=>$gs->{pid}, teacherCode=>$gr->{teacherCode}, booksId => $booksId})->all();
+		@homeworkListTmp = sort { $a->{chapterNum} <=> $b->{chapterNum} } @homeworkList if(scalar @homeworkList);
+	}
 	
 	return jr({homeworkList=>\@homeworkListTmp});
 }
@@ -9906,6 +10053,10 @@ sub p_PaymentBill_generate{
 	obj_write($PaymentBill);
 	obj_write($order);
 
+	if ($gr->{paymentTypes} eq 'apple') {
+	    return jr({PaymentBill => $PaymentBill->{_id}});
+	}
+
 	my $pay_info = PaymentBill_pay($PaymentBill, $gr->{paymentTypes}, $gs->{pid}, "");
 	return jr({pay_info=>$pay_info});
 }
@@ -11164,6 +11315,13 @@ $man_ds_statistics_learning=<<EOF;
 }
 EOF
 
+ 
+sub p_read_person
+{
+my $person=obj_read("person",$gr->{pid});
+return jr({person => $person});
+}
+
  $p_statistics_top10book =<<EOF;
 	 输入:
 		# time_scale:, #时间尺度（month/day）
@@ -11171,13 +11329,6 @@ EOF
 		# list:[{date:day/month,
 		书名:销量		}] 
 EOF
-
- 
-sub p_read_person
-{
-my $person=obj_read("person",$gr->{pid});
-return jr({person => $person});
-}
 
 sub p_statistics_top10book{
 
@@ -11450,6 +11601,8 @@ $p_statistics_learning =<<EOF;
 		   # city,	   #市 
 		   # area,	   #区
 		   # school,	   #学校
+		   #grade,#年级
+		   #class#班级
 	# 输出：	
 		# list:[
 				book_name:,课程名称
@@ -11468,9 +11621,12 @@ EOF
 
 sub p_statistics_learning{
 
-
+  
 return jr() unless assert (defined($gr->{city}),"至少选择城市","至少选择城市","至少选择城市");
  
+# return jr() unless assert(defined($gr->{class} && !defined($gr->{grade})),"未选择年级","未选择年级","未选择年级");
+ #return jr() unless assert(defined($gr->{class} && defined($gr->{grade}) && !defined($gr->{school} ),"未选择学校","未选择学校","未选择学校");
+  
 if(defined($gr->{school}))
 {
 	if(!defined($gr->{city}) || !defined($gr->{area}) || $gr->{city} eq "" ||$gr->{area} eq "" )
@@ -11483,6 +11639,7 @@ if(defined($gr->{school}))
 		return jr({ERR => "信息有误，无此学校，请检查"});
 	}
 } 
+
 elsif(defined($gr->{area}))
 {
 	if(!defined($gr->{city}) || $gr->{city} eq ""  )
@@ -11505,6 +11662,7 @@ my $city=mdb()->get_collection("city")->find_one({cityName=>$gr->{city}} );
 
 }
 
+
 my @output_list ;
 if(defined($gr->{city}))
 {
@@ -11512,116 +11670,354 @@ if(defined($gr->{city}))
 	{
 		if(defined($gr->{school}))
 		{#output school level
-		  
-			my @orders=mdb()->get_collection("order")->find({Order_Status => "已完成"})->all;
 			
-			foreach $order(@orders)
-			{	
-				my $person=mdb()->get_collection("person")->find_one({_id=>$order->{personId}});
-				if(defined($person))
-				{
-				$person=obj_read("person",$order->{personId});
-				}
-				else
-				{next;}
-				my $finish_number=0;
-				my $inprocess_number=0;
-				my $total_point=0;
-				my $booksHomeworkInfo=mdb()->get_collection("booksHomeworkInfo")->find_one({teacherCode => $person->{teacherCode},bookName=>$order->{bookName}});
-				my $homeworkSharePersonal=mdb()->get_collection("homeworkSharePersonal")->find_one({booksId=>$order->{booksID},personId=>$order->{personId}});
-				if($booksHomeworkInfo->{publishState} eq "已完成" )
-				{	
-					$finish_number=$finish_number+1; 
-					$total_point=>$total_point+$homeworkSharePersonal->{total_all};
-					
-				} 
-				elsif($booksHomeworkInfo->{publishState} eq "进行中" )
-				{
-					$inprocess_number=$inprocess_number+1;
-				}
-				else
-				{
-					next;
-				}
-			
-				if($person->{school} eq $gr->{school})
-				{
-					my $book_exist=0;
-					
-					
-					for($i=0;$i<=$#output_list;$i=$i+1)
-					{
-					 if(@output_list)
-					 {}
-					 else
-					 {
-						last;
-					 }
-						if($output_list[$i]->{book_name} eq $order->{bookName})
+			if(defined($gr->{grade}))
+			{
+				if(defined($gr->{class}))
+				{#输出班级
+					my @orders=mdb()->get_collection("order")->find({Order_Status => "已完成"})->all;
+				
+					foreach $order(@orders)
+					{	
+						my $person=mdb()->get_collection("person")->find_one({_id=>$order->{personId}});
+						if(defined($person))
 						{
-							$book_exist=1;#图书存在
-							$output_list[$i]->{user_number}=$output_list[$i]->{user_number}+1;
-							if($finish_number == 1)#课程完成
+						$person=obj_read("person",$order->{personId});
+						}
+						else
+						{next;}
+						my $finish_number=0;
+						my $inprocess_number=0;
+						my $total_point=0;
+						my $booksHomeworkInfo=mdb()->get_collection("booksHomeworkInfo")->find_one({teacherCode => $person->{teacherCode},bookName=>$order->{bookName}});
+						my $homeworkSharePersonal=mdb()->get_collection("homeworkSharePersonal")->find_one({booksId=>$order->{booksID},personId=>$order->{personId}});
+						if($booksHomeworkInfo->{publishState} eq "已完成" )
+						{	
+							$finish_number=$finish_number+1; 
+							$total_point=>$total_point+$homeworkSharePersonal->{total_all};
+							
+						} 
+						elsif($booksHomeworkInfo->{publishState} eq "进行中" )
+						{
+							$inprocess_number=$inprocess_number+1;
+						}
+						else
+						{
+							next;
+						}
+					
+						if($person->{class} eq $gr->{class})
+						{
+							my $book_exist=0;
+							
+							
+							for($i=0;$i<=$#output_list;$i=$i+1)
 							{
-								$output_list[$i]->{finish_number}=	$output_list[$i]->{finish_number}+1;
-								$output_list[$i]->{total_point}=	$output_list[$i]->{total_point}+$total_point;
-								$output_list[$i]->{total_time}=	$output_list[$i]->{total_time}+$booksHomeworkInfo->{finishTime}-$booksHomeworkInfo->{startTime};
-								completion_rate=>0,#课程完成率,
-							} 
-							elsif($inprocess_number == 1)#课程进行中
-							{
-							$output_list[$i]->{inprocess_number}=	$output_list[$i]->{inprocess_number}+1;
-								
+							 if(@output_list)
+							 {}
+							 else
+							 {
+								last;
+							 }
+								if($output_list[$i]->{book_name} eq $order->{bookName})
+								{
+									$book_exist=1;#图书存在
+									$output_list[$i]->{user_number}=$output_list[$i]->{user_number}+1;
+									if($finish_number == 1)#课程完成
+									{
+										$output_list[$i]->{finish_number}=	$output_list[$i]->{finish_number}+1;
+										$output_list[$i]->{total_point}=	$output_list[$i]->{total_point}+$total_point;
+										$output_list[$i]->{total_time}=	$output_list[$i]->{total_time}+$booksHomeworkInfo->{finishTime}-$booksHomeworkInfo->{startTime};
+										completion_rate=>0,#课程完成率,
+									} 
+									elsif($inprocess_number == 1)#课程进行中
+									{
+									$output_list[$i]->{inprocess_number}=	$output_list[$i]->{inprocess_number}+1;
+										
+									}
+									 
+								}
 							}
 							 
+							if($book_exist == 0)
+							{
+								my $book=obj_read("books",$order->{booksId});
+								 
+								my $output_list_sub=
+								{
+									city=>$gr->{city},
+									area=>$gr->{area},
+									school=>$gr->{school},
+									grade=> $gr->{grade},
+									class=>$gr->{class},
+									
+									book_name=>$order->{bookName},
+									user_number=>1,#使用人数
+									finish_number=>0,
+									grades=>$book->{grade},#年级
+									avg_point=>0,#平均评分
+									avg_time=>0,#平均使用时间
+									total_point=>0,#总评分,
+									total_time=>0,#总时间
+									completion_rate=>0,#
+									inprocess_number=>0
+								 
+								};
+									if($finish_number == 1)
+									{
+										$output_list_sub->{finish_number}=	$output_list_sub->{finish_number}+1;
+										$output_list_sub->{total_point}=	$output_list_sub->{total_point}+$total_point;
+										$output_list_sub->{total_time}=	$output_list_sub->{total_time}+$booksHomeworkInfo->{finishTime}-$booksHomeworkInfo->{startTime};
+										
+									} 
+									elsif($inprocess_number ==1)
+									{
+										$output_list_sub->{inprocess_number}=	$output_list_sub->{inprocess_number}+1;
+								
+									}
+								push @output_list,$output_list_sub;
+				 
+							} 
+						}
+						else
+						{
+							next;
 						}
 					}
-					 
-					if($book_exist == 0)
-					{
-						my $book=obj_read("books",$order->{booksId});
-						 
-						my $output_list_sub=
-						{
-							city=>$gr->{city},
-							area=>$gr->{area},
-							school=>$gr->{school},
-							book_name=>$order->{bookName},
-							user_number=>1,#使用人数
-							finish_number=>0,
-							grades=>$book->{grade},#年级
-							avg_point=>0,#平均评分
-							avg_time=>0,#平均使用时间
-							total_point=>0,#总评分,
-							total_time=>0,#总时间
-							completion_rate=>0,#
-							inprocess_number=>0
-						 
-						};
-							if($finish_number == 1)
-							{
-								$output_list_sub->{finish_number}=	$output_list_sub->{finish_number}+1;
-								$output_list_sub->{total_point}=	$output_list_sub->{total_point}+$total_point;
-								$output_list_sub->{total_time}=	$output_list_sub->{total_time}+$booksHomeworkInfo->{finishTime}-$booksHomeworkInfo->{startTime};
-								
-							} 
-							elsif($inprocess_number ==1)
-							{
-								$output_list_sub->{inprocess_number}=	$output_list_sub->{inprocess_number}+1;
 						
-							}
-						push @output_list,$output_list_sub;
-		 
-					} 
-				}
+					}
 				else
-				{
-					next;
-				}
+				{ #输出年级
+					my @orders=mdb()->get_collection("order")->find({Order_Status => "已完成"})->all;
+				
+					foreach $order(@orders)
+					{	
+						my $person=mdb()->get_collection("person")->find_one({_id=>$order->{personId}});
+						if(defined($person))
+						{
+						$person=obj_read("person",$order->{personId});
+						}
+						else
+						{next;}
+						my $finish_number=0;
+						my $inprocess_number=0;
+						my $total_point=0;
+						my $booksHomeworkInfo=mdb()->get_collection("booksHomeworkInfo")->find_one({teacherCode => $person->{teacherCode},bookName=>$order->{bookName}});
+						my $homeworkSharePersonal=mdb()->get_collection("homeworkSharePersonal")->find_one({booksId=>$order->{booksID},personId=>$order->{personId}});
+						if($booksHomeworkInfo->{publishState} eq "已完成" )
+						{	
+							$finish_number=$finish_number+1; 
+							$total_point=>$total_point+$homeworkSharePersonal->{total_all};
+							
+						} 
+						elsif($booksHomeworkInfo->{publishState} eq "进行中" )
+						{
+							$inprocess_number=$inprocess_number+1;
+						}
+						else
+						{
+							next;
+						}
+					
+						if($person->{grade} eq $gr->{grade})
+						{
+							my $book_exist=0;
+							
+							
+							for($i=0;$i<=$#output_list;$i=$i+1)
+							{
+							 if(@output_list)
+							 {}
+							 else
+							 {
+								last;
+							 }
+								if($output_list[$i]->{book_name} eq $order->{bookName})
+								{
+									$book_exist=1;#图书存在
+									$output_list[$i]->{user_number}=$output_list[$i]->{user_number}+1;
+									if($finish_number == 1)#课程完成
+									{
+										$output_list[$i]->{finish_number}=	$output_list[$i]->{finish_number}+1;
+										$output_list[$i]->{total_point}=	$output_list[$i]->{total_point}+$total_point;
+										$output_list[$i]->{total_time}=	$output_list[$i]->{total_time}+$booksHomeworkInfo->{finishTime}-$booksHomeworkInfo->{startTime};
+										completion_rate=>0,#课程完成率,
+									} 
+									elsif($inprocess_number == 1)#课程进行中
+									{
+									$output_list[$i]->{inprocess_number}=	$output_list[$i]->{inprocess_number}+1;
+										
+									}
+									 
+								}
+							}
+							 
+							if($book_exist == 0)
+							{
+								my $book=obj_read("books",$order->{booksId});
+								 
+								my $output_list_sub=
+								{
+									city=>$gr->{city},
+									area=>$gr->{area},
+									school=>$gr->{school},
+								 class=>$gr->{class},
+										grade=> $gr->{grade},
+										
+									book_name=>$order->{bookName},
+									user_number=>1,#使用人数
+									finish_number=>0,
+									grades=>$book->{grade},#年级
+									avg_point=>0,#平均评分
+									avg_time=>0,#平均使用时间
+									total_point=>0,#总评分,
+									total_time=>0,#总时间
+									completion_rate=>0,#
+									inprocess_number=>0
+								 
+								};
+									if($finish_number == 1)
+									{
+										$output_list_sub->{finish_number}=	$output_list_sub->{finish_number}+1;
+										$output_list_sub->{total_point}=	$output_list_sub->{total_point}+$total_point;
+										$output_list_sub->{total_time}=	$output_list_sub->{total_time}+$booksHomeworkInfo->{finishTime}-$booksHomeworkInfo->{startTime};
+										
+									} 
+									elsif($inprocess_number ==1)
+									{
+										$output_list_sub->{inprocess_number}=	$output_list_sub->{inprocess_number}+1;
+								
+									}
+								push @output_list,$output_list_sub;
+				 
+							} 
+						}
+						else
+						{
+							next;
+						}
+					}
+			
+		 
+				}#输出年级
 			}
+			else
+			{#输出校级
+				
+				my @orders=mdb()->get_collection("order")->find({Order_Status => "已完成"})->all;
+				
+				foreach $order(@orders)
+				{	
+					my $person=mdb()->get_collection("person")->find_one({_id=>$order->{personId}});
+					if(defined($person))
+					{
+					$person=obj_read("person",$order->{personId});
+					}
+					else
+					{next;}
+					my $finish_number=0;
+					my $inprocess_number=0;
+					my $total_point=0;
+					my $booksHomeworkInfo=mdb()->get_collection("booksHomeworkInfo")->find_one({teacherCode => $person->{teacherCode},bookName=>$order->{bookName}});
+					my $homeworkSharePersonal=mdb()->get_collection("homeworkSharePersonal")->find_one({booksId=>$order->{booksID},personId=>$order->{personId}});
+					if($booksHomeworkInfo->{publishState} eq "已完成" )
+					{	
+						$finish_number=$finish_number+1; 
+						$total_point=>$total_point+$homeworkSharePersonal->{total_all};
+						
+					} 
+					elsif($booksHomeworkInfo->{publishState} eq "进行中" )
+					{
+						$inprocess_number=$inprocess_number+1;
+					}
+					else
+					{
+						next;
+					}
+				
+					if($person->{school} eq $gr->{school})
+					{
+						my $book_exist=0;
+						
+						
+						for($i=0;$i<=$#output_list;$i=$i+1)
+						{
+						 if(@output_list)
+						 {}
+						 else
+						 {
+							last;
+						 }
+							if($output_list[$i]->{book_name} eq $order->{bookName})
+							{
+								$book_exist=1;#图书存在
+								$output_list[$i]->{user_number}=$output_list[$i]->{user_number}+1;
+								if($finish_number == 1)#课程完成
+								{
+									$output_list[$i]->{finish_number}=	$output_list[$i]->{finish_number}+1;
+									$output_list[$i]->{total_point}=	$output_list[$i]->{total_point}+$total_point;
+									$output_list[$i]->{total_time}=	$output_list[$i]->{total_time}+$booksHomeworkInfo->{finishTime}-$booksHomeworkInfo->{startTime};
+									completion_rate=>0,#课程完成率,
+								} 
+								elsif($inprocess_number == 1)#课程进行中
+								{
+								$output_list[$i]->{inprocess_number}=	$output_list[$i]->{inprocess_number}+1;
+									
+								}
+								 
+							}
+						}
+						 
+						if($book_exist == 0)
+						{
+							my $book=obj_read("books",$order->{booksId});
+							 
+							my $output_list_sub=
+							{
+								city=>$gr->{city},
+								area=>$gr->{area},
+								school=>$gr->{school},
+							 class=>$gr->{class},
+									grade=> $gr->{grade},
+									
+								book_name=>$order->{bookName},
+								user_number=>1,#使用人数
+								finish_number=>0,
+								grades=>$book->{grade},#年级
+								avg_point=>0,#平均评分
+								avg_time=>0,#平均使用时间
+								total_point=>0,#总评分,
+								total_time=>0,#总时间
+								completion_rate=>0,#
+								inprocess_number=>0
+							 
+							};
+								if($finish_number == 1)
+								{
+									$output_list_sub->{finish_number}=	$output_list_sub->{finish_number}+1;
+									$output_list_sub->{total_point}=	$output_list_sub->{total_point}+$total_point;
+									$output_list_sub->{total_time}=	$output_list_sub->{total_time}+$booksHomeworkInfo->{finishTime}-$booksHomeworkInfo->{startTime};
+									
+								} 
+								elsif($inprocess_number ==1)
+								{
+									$output_list_sub->{inprocess_number}=	$output_list_sub->{inprocess_number}+1;
+							
+								}
+							push @output_list,$output_list_sub;
+			 
+						} 
+					}
+					else
+					{
+						next;
+					}
+				}
 		
 		 
 		 
+			}
+			
 			 
 		}
 		else
@@ -11865,9 +12261,16 @@ else
 
 foreach $outlist(@output_list)
 {
-	$outlist->{completion_rate}=sprintf "%.2f",$outlist->{finish_number}/$outlist->{user_number};
-	$outlist->{avg_time}=sprintf "%.1f",$outlist->{total_time}/$outlist->{finish_number}/86400;
-	$outlist->{avg_point}=sprintf "%.2f",$outlist->{total_point}/$outlist->{finish_number};
+	if($outlist->{user_number} >0 )
+	{
+		$outlist->{completion_rate}=sprintf "%.2f",$outlist->{finish_number}/$outlist->{user_number};
+	}
+	if($outlist->{finish_number} >0 )
+	{
+		$outlist->{avg_time}=sprintf "%.1f",$outlist->{total_time}/$outlist->{finish_number}/86400;
+		$outlist->{avg_point}=sprintf "%.2f",$outlist->{total_point}/$outlist->{finish_number};
+	}
+
 
 	}
 	
@@ -12632,6 +13035,113 @@ sub p_system_paytype_qry
 			wechat => $wechat,
 			alipay => $alipay,
 			apple => $apple,
+		});
+}
+
+$p_readingPage_record = <<EOF;
+朗读录音
+INPUT:
+  chapterID => 章节
+  chapterPage => 第几页
+  audioFile => 上传的音频文件
+  audioFrag => 属性第几个切分片段，索引从 0 开始
+  audioFinal => 是否最后一个切分片段
+OUPUT:
+  // 原样返回
+  chapterID => 章节
+  chapterPage => 第几页
+  audioFile => 上传的音频文件
+  audioFrag => 属性第几个切分片段，索引从 0 开始
+  audioFinal => 是否最后一个切分片段
+  // 额外输出
+  audioText => 识别文本
+  scoreStar => 评分星级，是最后一个片段才有效
+EOF
+
+sub p_readingPage_record
+{
+    return jr() unless assert($gs->{pid}, "login first", "ERR_LOGIN", "Login first");
+    return jr() unless assert($gr->{chapterID},"expcet argument: chapterID","ERR_ARGUMENT","缺少章节号");
+    return jr() unless assert($gr->{chapterPage},"expcet argument: chapterPage","ERR_ARGUMENT","缺少页码");
+    return jr() unless assert($gr->{audioFile},"expcet argument: audioFile","ERR_ARGUMENT","缺少音频文件");
+    return jr() unless assert($gr->{audioFrag},"expcet argument: audioFrag","ERR_ARGUMENT","缺少音频分段");
+    return jr() unless assert($gr->{audioFinal},"expcet argument: audioFinal","ERR_ARGUMENT","缺少音频结束标记");
+
+    my $scoreStar = 0;
+    $scoreStar = 3 if $gr->{audioFinal};
+	my $audioText = "暂未识别";
+
+	my $readingPage_doc = mdb()->get_collection("readingPage")->find_one({
+			studentID => $gs->{pid},
+			chapterID => $gr->{chapterID},
+			chapterPage => $gr->{chapterPage},
+		});
+
+	if (!defined($readingPage_doc)) {
+		# 新建记录
+		$readingPage_doc = {
+			_id => obj_id(),
+			type => 'readingPage',
+			studentID => $gs->{pid},
+			chapterID => $gr->{chapterID},
+			chapterPage => $gr->{chapterPage},
+			fragCount => 1,
+			readingFrag => [{
+					audioFrag => $gr->{audioFrag}, 
+					audioFile => $gr->{audioFile},
+					audioText => $audioText,
+				}],
+			scoreStar => 0,
+		};
+	}
+	else {
+		my $readFrag_new = {
+			audioFrag => $gr->{audioFrag}, 
+			audioFile => $gr->{audioFile},
+			audioText => $audioText,
+		};
+		push(@{$readingPage_doc->{readingFrag}}, $readingPage_new);
+		$readingPage_doc->{fragCount} += 1;
+		$readingPage_doc->{scoreStar} = 3 if $gr->{audioFinal};
+	}
+	obj_write($readingPage_new);
+
+	return jr({
+			chapterID => $gr->{chapterID},
+			chapterPage => $gr->{chapterPage},
+			audioFile => $gr->{audioFile},
+			audioFrag => $gr->{audioFrag},
+			audioFinal => $gr->{audioFinal},
+			audioText => $audioText,
+			scoreStar => $scoreStar,
+		});
+}
+
+$man_ds_readingPage = <<EOF;
+朗读分页表
+
+_id:
+studentID: 学生号
+chapterID: 章节号
+chapterPage: 页码
+fragCount: 录音分片数量
+readingFrag:[
+	{
+		audioFrag: 录音分片索引，0 开始
+		audioFile: 录音文件
+		audioText: 识别的录音
+	}
+]
+scoreStar: 评分
+EOF
+
+sub p_system_path_test
+{
+	do "Speech.pm";
+	return jr({
+			INC => \@INC,
+			SpeechFile => $INC{"Speech.pm"},
+			SpeechVersion => $Speech::VERSION,
 		});
 }
 

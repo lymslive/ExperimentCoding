@@ -10,7 +10,7 @@ use JSON;
 use MIME::Base64;
 use Encode;
 
-# 运用参数
+# 应用参数
 my $APP_ID = "15270466";
 my $API_KEY =  "2zj1EWbaiWWLlyxmFsKMZRj8";
 my $SECRET_KEY = "Yr4eePOXAqVSyGEvd1yM3QjR1wGisjf4";
