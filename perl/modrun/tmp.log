@@ -1,0 +1,76 @@
+[2019/01/24 09:50:18][ERROR][app.pl:27(main::)] log one error!
+[2019/01/24 09:51:40][ERROR][app.pl:29(main::)] log one error!
+[2019/01/24 09:51:55][ERROR][app.pl:28(main::)] log one error!
+[2019/01/24 09:52:43][ERROR][app.pl:28(main::)] log one error!
+[2019/01/24 09:52:52][ERROR][app.pl:28(main::)] log one error!
+[2019/01/24 09:53:26][ERROR][app.pl:27(main::)] log one error!
+[2019/01/24 09:54:55][ERROR][app.pl:27(main::)] log one error!
+[2019/01/24 09:55:10][ERROR][app.pl:27(main::)] log one error!
+[2019/01/24 09:56:02][ERROR][app.pl:26(main::)] log one error!
+[2019/01/24 09:56:02][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(main::)] log another error!
+[2019/01/24 09:56:20][ERROR][app.pl:26(main::)] log one error!
+[2019/01/24 09:56:20][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(main::)] log another error!
+[2019/01/24 09:57:39][ERROR][app.pl:26(main::)] log one error!
+[2019/01/24 09:57:39][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(main::)] log another error!
+[2019/01/24 10:32:16][ERROR][app.pl:26(main::)] log one error!
+[2019/01/24 10:32:16][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(main::)] log another error!
+[2019/01/24 10:32:16][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:18(mod::foo)] debug sub foo
+[2019/01/24 10:35:46][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:35:46][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 10:37:08][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:37:08][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 10:37:08][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(main::)] log another error!
+[2019/01/24 10:37:08][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:18(mod::foo)] debug sub foo
+[2019/01/24 10:44:39][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:44:39][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 10:44:39][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(main::)] log another error!
+[2019/01/24 10:44:39][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:18(mod::foo)] debug sub foo
+[2019/01/24 10:47:34][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:47:34][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 10:47:34][ERROR][/home/tansl/mygit/expcode/perl/modrun/app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:47:34][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(app::BEGIN)] log another error!
+[2019/01/24 10:47:34][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:21(mod::foo)] debug sub foo
+[2019/01/24 10:48:21][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:48:21][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 10:48:21][ERROR][/home/tansl/mygit/expcode/perl/modrun/app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:48:21][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(app::BEGIN)] log another error!
+[2019/01/24 10:48:21][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:21(mod::foo)] debug sub foo
+[2019/01/24 10:48:21][INFO][/home/tansl/mygit/expcode/perl/modrun/mod.pm:16(app::BEGIN)] share app::log
+[2019/01/24 10:49:26][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:49:26][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 10:49:26][ERROR][/home/tansl/mygit/expcode/perl/modrun/app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:49:26][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(app::BEGIN)] log another error!
+[2019/01/24 10:49:26][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:21(mod::foo)] debug sub foo
+[2019/01/24 10:49:26][INFO][/home/tansl/mygit/expcode/perl/modrun/mod.pm:16(app::BEGIN)] share app::log
+[2019/01/24 10:49:26][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:21(mod::foo)] debug sub foo
+[2019/01/24 10:51:27][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:51:27][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 10:51:27][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(main::)] log another error!
+[2019/01/24 10:51:27][ERROR][/home/tansl/mygit/expcode/perl/modrun/app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:51:27][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:21(mod::foo)] debug sub foo
+[2019/01/24 10:51:27][INFO][/home/tansl/mygit/expcode/perl/modrun/bus.pl:24(main::)] share app::log
+[2019/01/24 10:51:27][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:21(mod::foo)] debug sub foo
+[2019/01/24 10:53:56][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:53:56][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 10:54:13][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:54:13][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 10:54:31][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 10:54:31][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 10:54:31][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:20(main::)] log another error!
+[2019/01/24 10:54:31][INFO][/home/tansl/mygit/expcode/perl/modrun/bus.pl:24(main::)] share app::log
+[2019/01/24 10:54:31][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:21(mod::foo)] debug sub foo
+[2019/01/24 11:18:13][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 11:18:13][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 11:19:05][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 11:19:05][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 11:19:05][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:23(main::)] log another error!
+[2019/01/24 11:19:05][INFO][/home/tansl/mygit/expcode/perl/modrun/bus.pl:27(main::)] share app::log
+[2019/01/24 11:19:05][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:21(mod::foo)] debug sub foo
+[2019/01/24 11:22:45][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 11:22:45][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 11:23:02][ERROR][app.pl:25(app::BEGIN)] log one error!
+[2019/01/24 11:23:02][ERROR][/home/tansl/mygit/expcode/perl/modrun/mod.pm:13(app::BEGIN)] log error in mod!
+[2019/01/24 11:23:02][ERROR][/home/tansl/mygit/expcode/perl/modrun/bus.pl:23(main::)] log another error!
+[2019/01/24 11:23:02][INFO][/home/tansl/mygit/expcode/perl/modrun/bus.pl:27(main::)] share app::log
+[2019/01/24 11:23:02][INFO][/home/tansl/mygit/expcode/perl/modrun/bus.pl:30(main::)] using alias logger object
+[2019/01/24 11:23:02][DEBUG][/home/tansl/mygit/expcode/perl/modrun/mod.pm:21(mod::foo)] debug sub foo
