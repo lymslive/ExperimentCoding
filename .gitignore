@@ -18,6 +18,9 @@ Session.vim
 *.obj
 *.out
 bin/
+_*
+*.tgz
+*.tar.gz
  
 # tmp work
 tmp/
